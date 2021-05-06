@@ -18,6 +18,7 @@ public class AtomicMulticast {
         String lastTime = "";
 
         while(true) {
+            // Try reading if anything arrived
             try {
                 byte[] entry = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(entry, entry.length);
@@ -27,9 +28,9 @@ public class AtomicMulticast {
                 String vars[] = received.split("\\s");
                 System.out.println();
                 if(vars[0].equals(lastTime)) {
+                    if(vars[1].equals(name)) { continue; }
                     System.out.println("Old: " + received);
                 } else {
-                    // if(vars[1].equals(name)) { continue; }
                     System.out.println("New: " + received);
                     lastTime = vars[0];
                     
@@ -38,9 +39,9 @@ public class AtomicMulticast {
                     socket.send(packet2);
                 }
                 if("end".equals(received)) { break; }
-            } catch (IOException e) {
-                // System.out.print(".");
-            }
+            } catch (IOException e) {}
+
+            // Send if there is an input
             if(System.in.available() > 0) {
                 String msg = scanner.nextLine();
                 String time = Long.toString(System.currentTimeMillis());
